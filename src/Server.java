@@ -1,7 +1,6 @@
 import Functions.Key;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -16,17 +15,16 @@ public class Server {
      final BigInteger P = BigInteger.valueOf(11);
      final BigInteger G = BigInteger.valueOf(6);
         try {
-            Scanner messager= new Scanner(System.in);
             System.out.println(GREEN+"[SERVER] Serveri eshte duke degjuar"+ RESET);
             ServerSocket serverSocket = new ServerSocket(1543);
             Socket clientSocket = serverSocket.accept();
 
 
 
-            ObjectInputStream serverIn = new ObjectInputStream(clientSocket.getInputStream());
-            ObjectOutputStream serverOut = new ObjectOutputStream(clientSocket.getOutputStream());
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
-            String initmessage = (String) serverIn.readObject();
+            String initmessage = in.readLine();
 
             System.out.println(GREEN+"[SERVER] Mesazhi i pranuar : " + initmessage+ RESET);
 
@@ -36,9 +34,10 @@ public class Server {
 
             BigInteger calculatedServerValue = G.modPow(A, P);
             System.out.println(GREEN+"[SERVER] Mesazhi qe dergohet te klienti eshte: " + calculatedServerValue+ RESET);
-            serverOut.writeObject(calculatedServerValue);
+            out.println(calculatedServerValue);
 
-            BigInteger valueFromClient = (BigInteger) serverIn.readObject();
+            String strvalueFromClient = in.readLine();
+            BigInteger valueFromClient= new BigInteger(strvalueFromClient);
             System.out.println(GREEN+"[SERVER] Vlera e pranuar nga klienti eshte: "+ valueFromClient+ RESET);
 
 
@@ -48,19 +47,19 @@ public class Server {
             System.out.println(GREEN+"[SERVER] Celesi i perbashket i shkembyer eshte: " + exchagedKey+ RESET);
 
             String message;
-            while(true) {
-                System.out.print(GREEN+"[SERVER]");
-                message= messager.nextLine();
-                if (message.equals(disconnect))
-                {
-                    serverOut.writeObject(GREEN+"This client has disconnected!"+ LocalTime.now());
-                    serverSocket.close();
-                    clientSocket.close();
+            while(true){
+                message=in.readLine();
+                if (message.equals(disconnect)){
+                    System.out.println(GREEN+"This client has disconnected!"+ LocalTime.now()+ RESET);
                     break;
                 }
-                serverOut.writeObject(message);
-
+                System.out.print(GREEN+"[SERVER] "+ RESET );
+                System.out.println(message + RESET);
+                out.println(GREEN+ "[SERVER] Recieved: "+message+ RESET );
             }
+
+            serverSocket.close();
+            clientSocket.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
