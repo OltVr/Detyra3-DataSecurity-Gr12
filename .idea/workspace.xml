@@ -4,12 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="79ac4635-f436-42af-8778-c6c0ecdf9a1b" name="Changes" comment="Bugs">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="79ac4635-f436-42af-8778-c6c0ecdf9a1b" name="Changes" comment="Going to make changes to inpuut and output streams to allow communication between sockets">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Server.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,7 +107,15 @@
       <option name="project" value="LOCAL" />
       <updated>1715776457722</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Going to make changes to inpuut and output streams to allow communication between sockets">
+      <option name="closed" value="true" />
+      <created>1715784327957</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1715784327957</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -129,6 +133,7 @@
     <MESSAGE value="Start of Diffie Hellman from Execises" />
     <MESSAGE value="modularized the code and added a little bit of customization" />
     <MESSAGE value="Bugs" />
-    <option name="LAST_COMMIT_MESSAGE" value="Bugs" />
+    <MESSAGE value="Going to make changes to inpuut and output streams to allow communication between sockets" />
+    <option name="LAST_COMMIT_MESSAGE" value="Going to make changes to inpuut and output streams to allow communication between sockets" />
   </component>
 </project>
