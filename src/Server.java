@@ -1,3 +1,5 @@
+import Functions.Key;
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigInteger;
@@ -5,12 +7,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-    public static final BigInteger P = BigInteger.valueOf(11);
-    public static final BigInteger G = BigInteger.valueOf(6);
-    public static void main(String[] arg) {
+    public static final String GREEN = "\u001B[32m";
+    private static final String RESET = "\u001B[0m";
+    public static void ServerStart(){
+     final BigInteger P = BigInteger.valueOf(11);
+     final BigInteger G = BigInteger.valueOf(6);
         try {
 
-            System.out.println("Serveri eshte duke degjuar");
+            System.out.println(GREEN+"[SERVER] Serveri eshte duke degjuar"+ RESET);
             ServerSocket serverSocket = new ServerSocket(1543);
             Socket clientSocket = serverSocket.accept();
 
@@ -21,24 +25,24 @@ public class Server {
 
             String message = (String) serverIn.readObject();
 
-            System.out.println("Mesazhi i pranuar : " + message);
+            System.out.println(GREEN+"[SERVER] Mesazhi i pranuar : " + message+ RESET);
 
             // Komunikime + kalkulime
 
-            BigInteger A = generateKey();
+            BigInteger A = Key.generateKey();
 
             BigInteger calculatedServerValue = G.modPow(A, P);
-            System.out.println("Mesazhi qe dergohet te klienti eshte: " + calculatedServerValue);
+            System.out.println(GREEN+"[SERVER] Mesazhi qe dergohet te klienti eshte: " + calculatedServerValue+ RESET);
             serverOut.writeObject(calculatedServerValue);
 
             BigInteger valueFromClient = (BigInteger) serverIn.readObject();
-            System.out.println("Vlera e pranuar nga klienti eshte: "+ valueFromClient);
+            System.out.println(GREEN+"[SERVER] Vlera e pranuar nga klienti eshte: "+ valueFromClient+ RESET);
 
 
             // Calculate final key
 
             BigInteger exchagedKey = valueFromClient.modPow(A, P);
-            System.out.println("Celesi i perbashket i shkembyer eshte: " + exchagedKey);
+            System.out.println(GREEN+"[SERVER] Celesi i perbashket i shkembyer eshte: " + exchagedKey+ RESET);
 
             serverSocket.close();
             clientSocket.close();
@@ -47,8 +51,5 @@ public class Server {
         }
     }
 
-    public static BigInteger generateKey() {
-        return BigInteger.valueOf((long) (Math.random() * 1000));
-    }
 }
 
