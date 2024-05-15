@@ -5,8 +5,11 @@
 import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 import java.net.Socket;
+    import java.time.LocalTime;
+    import java.util.Scanner;
 
     public class Client {
+        private static final String disconnect= "!q";
         private static final String YELLOW = "\u001B[33m";
         private static final String RESET = "\u001B[0m";
         public static void ClientStart(){
@@ -14,6 +17,7 @@ import java.net.Socket;
           final BigInteger G = BigInteger.valueOf(6);
 
             try  {
+                Scanner messager= new Scanner(System.in);
                 Socket socket = new Socket("localhost", 1543);
                 ObjectOutputStream clientOut = new ObjectOutputStream(socket.getOutputStream());
                 ObjectInputStream clientIn = new ObjectInputStream(socket.getInputStream());
@@ -36,7 +40,21 @@ import java.net.Socket;
                 BigInteger exchagedKey = valueFromServer.modPow(B, P);
                 System.out.println(YELLOW+"[CLIENT] Celesi i perbashket i shkembyer eshte: " + exchagedKey+ RESET);
 
-                socket.close();
+                String message;
+                while(true) {
+                    System.out.print(YELLOW+"[CLIENT]"+RESET);
+                    message= messager.nextLine();
+                    if (message.equals(disconnect))
+                    {
+                        clientOut.writeObject(YELLOW+"This client has disconnected!"+ LocalTime.now()+RESET);
+                        socket.close();
+                        break;
+                    }
+                    clientOut.writeObject(message);
+
+                }
+
+
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

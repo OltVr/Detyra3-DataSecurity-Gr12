@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
 public class Main {
-    public static void main() {
+    public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Are you a client or server (c/s)");
         System.out.println("[TESTING] for testing reasons we can run both with (b) ");
