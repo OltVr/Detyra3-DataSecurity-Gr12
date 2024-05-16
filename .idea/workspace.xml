@@ -7,6 +7,7 @@
     <list default="true" id="79ac4635-f436-42af-8778-c6c0ecdf9a1b" name="Changes" comment="Made the one-sided communication. You will need to use CMD for it to work.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Functions/Key.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Functions/Key.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Server.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -139,7 +140,23 @@
       <option name="project" value="LOCAL" />
       <updated>1715786832413</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Made the one-sided communication. You will need to use CMD for it to work.">
+      <option name="closed" value="true" />
+      <created>1715792562243</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1715792562243</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Made the one-sided communication. You will need to use CMD for it to work.">
+      <option name="closed" value="true" />
+      <created>1715792575647</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1715792575647</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

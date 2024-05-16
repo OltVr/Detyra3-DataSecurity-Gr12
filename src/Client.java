@@ -4,6 +4,8 @@
     import java.io.*;
     import java.math.BigInteger;
 import java.net.Socket;
+    import java.nio.charset.StandardCharsets;
+    import java.util.Arrays;
 
 
     public class Client {
@@ -42,14 +44,18 @@ import java.net.Socket;
                 BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
                 String message;
                 while (true) {
+
                     System.out.print(YELLOW+"[CLIENT] ");
                     message = userInput.readLine();
+                    byte[] encrypted = Key.encrypt(message,exchagedKey);
                     if(message.equals(disconnect)){
                         System.out.println(YELLOW+"[CLIENT] Logging Out"+ RESET);
                         out.println("!q");
                         break;
                     }
-                    out.println(YELLOW+ message);
+                    //TODO Check how to send byte array you have one idea in chatGPT
+                    System.out.println(Arrays.toString(encrypted));
+                    out.println(Arrays.toString(encrypted));
                     System.out.println(YELLOW+ "Server: " + in.readLine());
                 }
 

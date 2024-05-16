@@ -4,7 +4,9 @@ import java.io.*;
 import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalTime;
+import java.util.Arrays;
 
 
 public class Server {
@@ -50,9 +52,10 @@ public class Server {
             while(true){
                 message=in.readLine();
                 if (message.equals(disconnect)){
-                    System.out.println(GREEN+"This client has disconnected!"+ LocalTime.now()+ RESET);
+                    System.out.println(GREEN+"The client "+ clientSocket.getLocalSocketAddress() +" has disconnected!"+ LocalTime.now()+ RESET);
                     break;
                 }
+
                 System.out.print(GREEN+"[SERVER] "+ RESET );
                 System.out.println(message + RESET);
                 out.println(GREEN+ "[SERVER] Recieved: "+message+ RESET );
