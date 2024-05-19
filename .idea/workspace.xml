@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="79ac4635-f436-42af-8778-c6c0ecdf9a1b" name="Changes" comment="Made the one-sided communication. You will need to use CMD for it to work.">
-      <change afterPath="$PROJECT_DIR$/src/Olta/DHClient.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Olta/DHServer.java" afterDir="false" />
-    </list>
+    <list default="true" id="79ac4635-f436-42af-8778-c6c0ecdf9a1b" name="Changes" comment="Added another version just to test out different methods" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -46,22 +43,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Client.executor": "Run",
-    "Application.Main.executor": "Run",
-    "Application.Server.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/FIEK/Semestri 4/Siguria e te Dhenave/Detyra 3/src/Olta",
-    "onboarding.tips.debug.path": "C:/Users/olt_v/IdeaProjects/Detyra3-DataSecurity/src/Main.java",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "preferences.lookFeel"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Client.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Server.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/FIEK/Semestri 4/Siguria e te Dhenave/Detyra 3/src/Olta&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/olt_v/IdeaProjects/Detyra3-DataSecurity/src/Main.java&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\FIEK\Semestri 4\Siguria e te Dhenave\Detyra 3\src\Olta" />
@@ -69,11 +66,11 @@
   </component>
   <component name="RunManager" selected="Application.DHClient">
     <configuration name="DHClient" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="Olta.DHClient" />
+      <option name="MAIN_CLASS_NAME" value="Test.DHClient" />
       <module name="Detyra3-DataSecurity" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="Olta.*" />
+          <option name="PATTERN" value="Test.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -82,11 +79,11 @@
       </method>
     </configuration>
     <configuration name="DHServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="Olta.DHServer" />
+      <option name="MAIN_CLASS_NAME" value="Test.DHServer" />
       <module name="Detyra3-DataSecurity" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="Olta.*" />
+          <option name="PATTERN" value="Test.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -190,7 +187,15 @@
       <option name="project" value="LOCAL" />
       <updated>1715792575647</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Added another version just to test out different methods">
+      <option name="closed" value="true" />
+      <created>1716120082331</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1716120082331</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -210,6 +215,7 @@
     <MESSAGE value="Bugs" />
     <MESSAGE value="Going to make changes to inpuut and output streams to allow communication between sockets" />
     <MESSAGE value="Made the one-sided communication. You will need to use CMD for it to work." />
-    <option name="LAST_COMMIT_MESSAGE" value="Made the one-sided communication. You will need to use CMD for it to work." />
+    <MESSAGE value="Added another version just to test out different methods" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added another version just to test out different methods" />
   </component>
 </project>
