@@ -1,28 +1,33 @@
-
-    import Functions.Key;
+import Functions.Key;
 
     import java.io.*;
     import java.math.BigInteger;
 import java.net.Socket;
-    import java.nio.charset.StandardCharsets;
-    import java.util.Arrays;
+import java.util.Arrays;
 
 
-    public class Client {
+public class Client {
         private static final String disconnect= "!q";
         private static final String YELLOW = "\u001B[33m";
+        private static final String BOLD = "\u001B[1m";
         private static final String RESET = "\u001B[0m";
+        private static void clientString(String word){
+            System.out.println(YELLOW+BOLD+"[CLIENT] "+RESET+ word);
+        }
+        private static void clientMSG(){
+            System.out.print(YELLOW+BOLD+"[CLIENT] "+RESET);
+        }
         public static void ClientStart(){
           final BigInteger P = BigInteger.valueOf(11);
           final BigInteger G = BigInteger.valueOf(6);
 
             try  {
-                Socket socket = new Socket("localhost", 1543);
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                Socket socket = new Socket("localhost", 1441);
+                ObjectOutputStream sender = new ObjectOutputStream(socket.getOutputStream());
+                ObjectInputStream receiver = new ObjectInputStream(socket.getInputStream());
 
-                System.out.println(YELLOW+"[CLIENT] Klienti po e dergon nje mesazh tek serveri"+ RESET);
-                out.println(YELLOW+"Mesazhi per serverin"+ RESET);
+                clientString("Klienti po e dergon nje mesazh tek serveri");
+                sender.writeObject("Mesazhi per serverin");
 
                 // Komunikime dhe kalkulime
 
@@ -30,37 +35,34 @@ import java.net.Socket;
 
                 BigInteger calculatedClientValue = G.modPow(B, P);
 
-                String strvalueFromServer = in.readLine();
-                BigInteger valueFromServer =new BigInteger(strvalueFromServer);
-                System.out.println(YELLOW+"[CLIENT] Mesazhi i pranuar nga serveri eshte: "+ valueFromServer+ RESET);
+                BigInteger valueFromServer = (BigInteger) receiver.readObject();
+               clientString("Mesazhi i pranuar nga serveri eshte: "+ valueFromServer);
 
-                System.out.println(YELLOW+"[CLIENT] Vlera e derguar tek serveri eshte: " + calculatedClientValue+ RESET);
-                out.println(calculatedClientValue);
+                clientString("Vlera e derguar tek serveri eshte: " + calculatedClientValue);
+                sender.writeObject(calculatedClientValue);
 
                 BigInteger exchagedKey = valueFromServer.modPow(B, P);
-                System.out.println(YELLOW+"[CLIENT] Celesi i perbashket i shkembyer eshte: " + exchagedKey+ RESET);
+                clientString("Celesi i perbashket i shkembyer eshte: " + exchagedKey);
 
+                BufferedReader messageStream = new BufferedReader(new InputStreamReader(System.in));
 
-                BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
-                String message;
                 while (true) {
-
-                    System.out.print(YELLOW+"[CLIENT] ");
-                    message = userInput.readLine();
+                    clientMSG();
+                    String message = messageStream.readLine();
                     byte[] encrypted = Key.encrypt(message,exchagedKey);
                     if(message.equals(disconnect)){
-                        System.out.println(YELLOW+"[CLIENT] Logging Out"+ RESET);
-                        out.println("!q");
+                        clientString("Logging Out!");
+                        sender.writeObject(disconnect);
                         break;
                     }
-                    //TODO Check how to send byte array you have one idea in chatGPT
                     System.out.println(Arrays.toString(encrypted));
-                    out.println(Arrays.toString(encrypted));
-                    System.out.println(YELLOW+ "Server: " + in.readLine());
+                    sender.writeObject(encrypted);
+                    clientString("Server: " + receiver.readObject());
                 }
 
                 socket.close();
             } catch (Exception e) {
+                System.out.println("[CLIENT] "+ e.getMessage());
                 throw new RuntimeException(e);
             }
 
