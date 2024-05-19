@@ -9,13 +9,24 @@ import java.util.Arrays;
 public class Client {
         private static final String disconnect= "!q";
         private static final String YELLOW = "\u001B[33m";
+        private static final String CYAN = "\u001B[36m";
+        private static final String RED= "\u001B[31m";
         private static final String BOLD = "\u001B[1m";
         private static final String RESET = "\u001B[0m";
         private static void clientString(String word){
             System.out.println(YELLOW+BOLD+"[CLIENT] "+RESET+ word);
         }
+        private static void CyanOP(String word){
+            System.out.println(CYAN+BOLD+"[+] "+RESET+word);
+        }
+        private static void RedOP(String word){
+            System.out.println(RED+BOLD+"[!] "+RESET+word);
+        }
         private static void clientMSG(){
             System.out.print(YELLOW+BOLD+"[CLIENT] "+RESET);
+        }
+        private static void clientExit(){
+            System.out.println(YELLOW+BOLD+"[*] "+RESET+"Logging off!"+RESET);
         }
         public static void ClientStart(){
           final BigInteger P = BigInteger.valueOf(11);
@@ -44,6 +55,17 @@ public class Client {
                 BigInteger exchagedKey = valueFromServer.modPow(B, P);
                 clientString("Celesi i perbashket i shkembyer eshte: " + exchagedKey);
 
+                byte[] verify = Key.encrypt(String.valueOf(exchagedKey), exchagedKey);
+                sender.writeObject(verify);
+                if ((boolean)receiver.readObject()){
+                    CyanOP("Connection has been established!");
+                }
+                else {
+                    RedOP("We found an illegal intervention! We are terminating the connection");
+                    socket.close();
+                    System.exit(1);
+                }
+
                 BufferedReader messageStream = new BufferedReader(new InputStreamReader(System.in));
 
                 while (true) {
@@ -51,7 +73,7 @@ public class Client {
                     String message = messageStream.readLine();
                     byte[] encrypted = Key.encrypt(message,exchagedKey);
                     if(message.equals(disconnect)){
-                        clientString("Logging Out!");
+                        clientExit();
                         sender.writeObject(disconnect);
                         break;
                     }
