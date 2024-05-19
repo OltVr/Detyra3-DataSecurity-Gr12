@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.security.*;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 import java.util.Scanner;
 import javax.crypto.KeyAgreement;
 import javax.crypto.SecretKey;
@@ -30,6 +31,8 @@ public class DHClient {
         privateKey = keyPair.getPrivate();
         publicKey = keyPair.getPublic();
 
+        System.out.println("\033[33mClient DH public key: " + Base64.getEncoder().encodeToString(publicKey.getEncoded()) + "\033[0m");
+
         // Initialize the KeyAgreement
         keyAgree = KeyAgreement.getInstance(ALGORITHM);
         keyAgree.init(privateKey);
@@ -47,6 +50,8 @@ public class DHClient {
             X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(serverPubKeyEnc);
             PublicKey serverPubKey = keyFactory.generatePublic(x509KeySpec);
 
+            System.out.println("\033[33mServer DH public key: " + Base64.getEncoder().encodeToString(serverPubKeyEnc) + "\033[0m");
+
             // Send client's public key
             output.writeObject(publicKey.getEncoded());
 
@@ -57,12 +62,16 @@ public class DHClient {
             byte[] sharedSecret = keyAgree.generateSecret();
             sharedSecretKey = new SecretKeySpec(sharedSecret, 0, 16, "AES");
 
+            System.out.println("\033[33mShared secret (AES key): " + Base64.getEncoder().encodeToString(sharedSecretKey.getEncoded()) + "\033[0m");
+
             // Receive and verify signed welcome message and server's public key
             byte[] signedMessage = (byte[]) input.readObject();
             byte[] serverSignaturePubKeyEnc = (byte[]) input.readObject();
             KeyFactory rsaKeyFactory = KeyFactory.getInstance("RSA");
             X509EncodedKeySpec rsaKeySpec = new X509EncodedKeySpec(serverSignaturePubKeyEnc);
             PublicKey serverSignaturePubKey = rsaKeyFactory.generatePublic(rsaKeySpec);
+
+            System.out.println("\033[33mServer RSA public key: " + Base64.getEncoder().encodeToString(serverSignaturePubKeyEnc) + "\033[0m");
 
             String welcomeMessage = "Welcome to the secure server!";
             if (verifyMessage(welcomeMessage, signedMessage, serverSignaturePubKey)) {
