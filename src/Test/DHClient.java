@@ -24,7 +24,7 @@ public class DHClient {
     private static Signature signature;
 
     public static void main(String[] args) throws Exception {
-        // Initialize key pair generator and generate key pair
+        // Gjenerohet key pair
         keyPairGen = KeyPairGenerator.getInstance(ALGORITHM);
         keyPairGen.initialize(2048);
         keyPair = keyPairGen.generateKeyPair();
@@ -33,18 +33,18 @@ public class DHClient {
 
         System.out.println("\033[33mClient DH public key: " + Base64.getEncoder().encodeToString(publicKey.getEncoded()) + "\033[0m");
 
-        // Initialize the KeyAgreement
+        // Inicializohet KeyAgreement
         keyAgree = KeyAgreement.getInstance(ALGORITHM);
         keyAgree.init(privateKey);
 
-        // Initialize Signature
+        // Inicializohet Signature
         signature = Signature.getInstance("SHA256withRSA");
 
         Socket socket = new Socket(SERVER_HOST, SERVER_PORT);
         try (ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
              ObjectInputStream input = new ObjectInputStream(socket.getInputStream())) {
 
-            // Receive server's public key
+            // Merret public key i serverit
             byte[] serverPubKeyEnc = (byte[]) input.readObject();
             KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM);
             X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(serverPubKeyEnc);
@@ -52,19 +52,19 @@ public class DHClient {
 
             System.out.println("\033[33mServer DH public key: " + Base64.getEncoder().encodeToString(serverPubKeyEnc) + "\033[0m");
 
-            // Send client's public key
+            // Dergohet public key i klientit
             output.writeObject(publicKey.getEncoded());
 
-            // Perform phase 1 of key agreement
+            // Faza 1 of key agreement
             keyAgree.doPhase(serverPubKey, true);
 
-            // Generate shared secret
+            // Gjenerohet shared secret
             byte[] sharedSecret = keyAgree.generateSecret();
             sharedSecretKey = new SecretKeySpec(sharedSecret, 0, 16, "AES");
 
             System.out.println("\033[33mShared secret (AES key): " + Base64.getEncoder().encodeToString(sharedSecretKey.getEncoded()) + "\033[0m");
 
-            // Receive and verify signed welcome message and server's public key
+            // Merret dhe verifikohet welcome message i nenshkruar dhe public key i serverit
             byte[] signedMessage = (byte[]) input.readObject();
             byte[] serverSignaturePubKeyEnc = (byte[]) input.readObject();
             KeyFactory rsaKeyFactory = KeyFactory.getInstance("RSA");
@@ -80,7 +80,6 @@ public class DHClient {
                 System.out.println("\033[31mSignature invalid. Connection may be compromised.\033[0m");
             }
 
-            // Further communication logic here...
             Scanner scanner = new Scanner(System.in);
             Thread readerThread = new Thread(() -> {
                 try {
