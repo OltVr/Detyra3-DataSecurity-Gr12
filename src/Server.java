@@ -4,61 +4,72 @@ import java.io.*;
 import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
+
 import java.time.LocalTime;
-import java.util.Arrays;
 
 
 public class Server {
-    public static final String GREEN = "\u001B[32m";
+    private static final String GREEN = "\u001B[32m";
+    private static final String CYAN = "\u001B[36m";
+    private static final String BOLD= "\u001B[1m";
     private static final String RESET = "\u001B[0m";
     private static final String disconnect= "!q";
+
+    private static void CyanOP(String word){
+        System.out.println(CYAN+BOLD+"[+] "+RESET+word);
+    }
+    private static void GreenOP(String word){
+        System.out.println(GREEN+BOLD+"[SERVER] "+RESET+word);
+    }
     public static void ServerStart(){
      final BigInteger P = BigInteger.valueOf(11);
      final BigInteger G = BigInteger.valueOf(6);
         try {
-            System.out.println(GREEN+"[SERVER] Serveri eshte duke degjuar"+ RESET);
-            ServerSocket serverSocket = new ServerSocket(1543);
+            CyanOP("Server is listening...");
+            ServerSocket serverSocket = new ServerSocket(1441);
             Socket clientSocket = serverSocket.accept();
+            CyanOP("Connection established with "+ clientSocket.getLocalSocketAddress());
 
 
+            ObjectOutputStream sender = new ObjectOutputStream(clientSocket.getOutputStream());
+            ObjectInputStream receiver = new ObjectInputStream(clientSocket.getInputStream());
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
-            String initmessage = in.readLine();
+            String initmessage = (String) receiver.readObject();
 
-            System.out.println(GREEN+"[SERVER] Mesazhi i pranuar : " + initmessage+ RESET);
+            GreenOP("Mesazhi i pranuar : " + initmessage);
 
             // Komunikime + kalkulime
 
             BigInteger A = Key.generateKey();
 
             BigInteger calculatedServerValue = G.modPow(A, P);
-            System.out.println(GREEN+"[SERVER] Mesazhi qe dergohet te klienti eshte: " + calculatedServerValue+ RESET);
-            out.println(calculatedServerValue);
+            GreenOP("Mesazhi qe dergohet te klienti eshte: " + calculatedServerValue);
+            sender.writeObject(calculatedServerValue);
 
-            String strvalueFromClient = in.readLine();
-            BigInteger valueFromClient= new BigInteger(strvalueFromClient);
-            System.out.println(GREEN+"[SERVER] Vlera e pranuar nga klienti eshte: "+ valueFromClient+ RESET);
+            BigInteger valueFromClient = (BigInteger) receiver.readObject();
+            GreenOP("Vlera e pranuar nga klienti eshte: "+ valueFromClient);
 
 
             // Calculate final key
 
             BigInteger exchagedKey = valueFromClient.modPow(A, P);
-            System.out.println(GREEN+"[SERVER] Celesi i perbashket i shkembyer eshte: " + exchagedKey+ RESET);
+            GreenOP("Celesi i perbashket i shkembyer eshte: " + exchagedKey);
 
-            String message;
+
+
             while(true){
-                message=in.readLine();
-                if (message.equals(disconnect)){
-                    System.out.println(GREEN+"The client "+ clientSocket.getLocalSocketAddress() +" has disconnected!"+ LocalTime.now()+ RESET);
+                Object received = receiver.readObject();
+                if (received instanceof String && received.equals(disconnect)) {
+                    GreenOP("The client " + clientSocket.getLocalSocketAddress() + " has disconnected! " + LocalTime.now());
                     break;
                 }
+                if (received instanceof byte[] encryptedMessage) {
+                    String decryptedMessage = Key.decrypt(encryptedMessage, exchagedKey);
+                    GreenOP(decryptedMessage);
+                    sender.writeObject("[SERVER] Received: " + decryptedMessage + RESET);
+                }
 
-                System.out.print(GREEN+"[SERVER] "+ RESET );
-                System.out.println(message + RESET);
-                out.println(GREEN+ "[SERVER] Recieved: "+message+ RESET );
             }
 
             serverSocket.close();
