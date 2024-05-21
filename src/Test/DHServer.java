@@ -7,6 +7,7 @@ import java.security.*;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 import javax.crypto.KeyAgreement;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -22,6 +23,7 @@ public class DHServer {
     private static KeyPairGenerator keyPairGen;
     private static KeyAgreement keyAgree;
     private static Signature signature;
+    private static String disconnect="!q";
 
     public static void main(String[] args) throws Exception {
         // Gjenerohet Key pair
@@ -104,8 +106,20 @@ public class DHServer {
                 Thread readerThread = new Thread(() -> {
                     try {
                         while (true) {
-                            String receivedMessage = (String) input.readObject();
-                            Operation.client(receivedMessage);
+                            String EncryptedMessageString = (String) input.readObject();
+                            byte[] recievedMessage = Base64.getDecoder().decode(EncryptedMessageString);
+                            byte[] decryptedMessageBytes = CryptoUtils.decryptAES(recievedMessage, sharedSecretKey);
+                            String decryptedMessage = new String(decryptedMessageBytes);
+                            if (decryptedMessage.equals(disconnect)){
+                                System.out.println("");
+                                Operation.cyanOp("Client has disconnected");
+                                Operation.redOp("Terminating Console");
+                                System.exit(1);
+                                break;
+                            }
+                            else {
+                                Operation.client(decryptedMessage);
+                            }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -116,10 +130,20 @@ public class DHServer {
                 while (true) {
                    Operation.servermsg();
                     String message = scanner.nextLine();
-                    output.writeObject(message);
+                    byte[] encryptedMessage = CryptoUtils.encryptAES(message.getBytes(), sharedSecretKey);
+                    String encryptedMessageString = Base64.getEncoder().encodeToString(encryptedMessage);
+                    output.writeObject(encryptedMessageString);
+                    if (message.equals(disconnect)){
+                        Operation.cyanOp("We are terminating the connection");
+                        readerThread.interrupt();
+                        clientSocket.close();
+                        System.exit(1);
+                        break;
+                    }
                 }
 
             } catch (Exception e) {
+                System.out.println("{ERROR} "+e.getMessage());
                 e.printStackTrace();
             }
         }

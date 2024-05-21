@@ -4,8 +4,10 @@ import java.io.*;
 import java.net.Socket;
 import java.security.*;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 import javax.crypto.KeyAgreement;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -22,6 +24,7 @@ public class DHClient {
     private static KeyPairGenerator keyPairGen;
     private static KeyAgreement keyAgree;
     private static Signature signature;
+    private static String disconnect="!q";
 
     public static void main(String[] args) throws Exception {
         // Gjenerohet key pair
@@ -71,6 +74,7 @@ public class DHClient {
             X509EncodedKeySpec rsaKeySpec = new X509EncodedKeySpec(serverSignaturePubKeyEnc);
             PublicKey serverSignaturePubKey = rsaKeyFactory.generatePublic(rsaKeySpec);
 
+
             Operation.yellowOp("Server RSA public key: " + Base64.getEncoder().encodeToString(serverSignaturePubKeyEnc));
 
             String welcomeMessage = "Welcome to the secure server!";
@@ -84,8 +88,21 @@ public class DHClient {
             Thread readerThread = new Thread(() -> {
                 try {
                     while (true) {
-                        String receivedMessage = (String) input.readObject();
-                        Operation.server(receivedMessage);
+                        // Receive the signed and encrypted message string from the client
+                        String signedEncryptedMessageString = (String) input.readObject();
+                        byte[] encryptedMessage = Base64.getDecoder().decode(signedEncryptedMessageString);
+                        byte[] decryptedMessageBytes = CryptoUtils.decryptAES(encryptedMessage, sharedSecretKey); // Assuming RSA signature length is 256 bytes
+
+                        String decryptedMessage = new String(decryptedMessageBytes);
+                        if (decryptedMessage.equals(disconnect)){
+                            System.out.println("");
+                            Operation.cyanOp("Server has disconnected");
+                            Operation.redOp("Terminating Console");
+                            System.exit(1);
+                        }
+                        else {
+                            Operation.server(decryptedMessage);
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -96,7 +113,18 @@ public class DHClient {
             while (true) {
                 Operation.clientmsg();
                 String message = scanner.nextLine();
-                output.writeObject(message);
+                byte[] encryptedMessage = CryptoUtils.encryptAES(message.getBytes(), sharedSecretKey);
+                String EncryptedMessageString = Base64.getEncoder().encodeToString(encryptedMessage);
+                output.writeObject(EncryptedMessageString);
+                if (message.equals(disconnect)){
+                    Operation.cyanOp("We are terminating the connection");
+                    readerThread.interrupt();
+                    socket.close();
+                    System.exit(1);
+                }
+
+// Send the signed and encrypted message string to the server
+
             }
 
         } catch (Exception e) {
