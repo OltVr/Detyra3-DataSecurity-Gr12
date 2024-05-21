@@ -31,7 +31,7 @@ public class DHServer {
         privateKey = keyPair.getPrivate();
         publicKey = keyPair.getPublic();
 
-        System.out.println("\033[32mServer DH public key: " + Base64.getEncoder().encodeToString(publicKey.getEncoded()) + "\033[0m");
+        Operation.yellowOp("Server DH public key: " + Base64.getEncoder().encodeToString(publicKey.getEncoded()));
 
         // Inicializohet KeyAgreement
         keyAgree = KeyAgreement.getInstance(ALGORITHM);
@@ -43,14 +43,14 @@ public class DHServer {
         PrivateKey signaturePrivateKey = signatureKeyPair.getPrivate();
         PublicKey signaturePublicKey = signatureKeyPair.getPublic();
 
-        System.out.println("\033[32mServer RSA public key: " + Base64.getEncoder().encodeToString(signaturePublicKey.getEncoded()) + "\033[0m");
+        Operation.yellowOp("Server RSA public key: " + Base64.getEncoder().encodeToString(signaturePublicKey.getEncoded()));
 
         ServerSocket serverSocket = new ServerSocket(PORT);
-        System.out.println("Listening for connections...");
+        Operation.cyanOp("Listening for connections...");
 
         while (true) {
             Socket clientSocket = serverSocket.accept();
-            System.out.println("Client connected.");
+            Operation.greenOp("Client connected.");
             new Thread(new ClientHandler(clientSocket, signaturePrivateKey, signaturePublicKey)).start();
         }
     }
@@ -81,7 +81,7 @@ public class DHServer {
                 X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(clientPubKeyEnc);
                 PublicKey clientPubKey = keyFactory.generatePublic(x509KeySpec);
 
-                System.out.println("\033[32mClient DH public key: " + Base64.getEncoder().encodeToString(clientPubKeyEnc) + "\033[0m");
+                Operation.yellowOp("Client DH public key: " + Base64.getEncoder().encodeToString(clientPubKeyEnc));
 
                 // Faza 1 of key agreement
                 keyAgree.doPhase(clientPubKey, true);
@@ -90,7 +90,7 @@ public class DHServer {
                 byte[] sharedSecret = keyAgree.generateSecret();
                 sharedSecretKey = new SecretKeySpec(sharedSecret, 0, 16, "AES");
 
-                System.out.println("\033[32mShared secret (AES key): " + Base64.getEncoder().encodeToString(sharedSecretKey.getEncoded()) + "\033[0m");
+                Operation.yellowOp("Shared secret (AES key): " + Base64.getEncoder().encodeToString(sharedSecretKey.getEncoded()));
 
                 // Dergohet welcome message i nenshkruar dhe public key i serverit
                 String welcomeMessage = "Welcome to the secure server!";
@@ -98,14 +98,14 @@ public class DHServer {
                 output.writeObject(signedMessage);
                 output.writeObject(signaturePublicKey.getEncoded());
 
-                System.out.println("\033[32mShared secret established. Sending signed welcome message...\033[0m");
+                Operation.greenOp("Shared secret established. Sending signed welcome message...");
 
 
                 Thread readerThread = new Thread(() -> {
                     try {
                         while (true) {
                             String receivedMessage = (String) input.readObject();
-                            System.out.println("\033[33mClient: " + receivedMessage + "\033[0m");
+                            Operation.client(receivedMessage);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -114,10 +114,9 @@ public class DHServer {
                 readerThread.start();
 
                 while (true) {
-                    System.out.print("Server: ");
+                   Operation.servermsg();
                     String message = scanner.nextLine();
                     output.writeObject(message);
-                    System.out.println("\033[32mServer: " + message + "\033[0m");
                 }
 
             } catch (Exception e) {

@@ -31,7 +31,7 @@ public class DHClient {
         privateKey = keyPair.getPrivate();
         publicKey = keyPair.getPublic();
 
-        System.out.println("\033[33mClient DH public key: " + Base64.getEncoder().encodeToString(publicKey.getEncoded()) + "\033[0m");
+        Operation.yellowOp("Client DH public key: " + Base64.getEncoder().encodeToString(publicKey.getEncoded()));
 
         // Inicializohet KeyAgreement
         keyAgree = KeyAgreement.getInstance(ALGORITHM);
@@ -50,7 +50,7 @@ public class DHClient {
             X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(serverPubKeyEnc);
             PublicKey serverPubKey = keyFactory.generatePublic(x509KeySpec);
 
-            System.out.println("\033[33mServer DH public key: " + Base64.getEncoder().encodeToString(serverPubKeyEnc) + "\033[0m");
+            Operation.yellowOp("Server DH public key: " + Base64.getEncoder().encodeToString(serverPubKeyEnc));
 
             // Dergohet public key i klientit
             output.writeObject(publicKey.getEncoded());
@@ -62,7 +62,7 @@ public class DHClient {
             byte[] sharedSecret = keyAgree.generateSecret();
             sharedSecretKey = new SecretKeySpec(sharedSecret, 0, 16, "AES");
 
-            System.out.println("\033[33mShared secret (AES key): " + Base64.getEncoder().encodeToString(sharedSecretKey.getEncoded()) + "\033[0m");
+           Operation.yellowOp("Shared secret (AES key): " + Base64.getEncoder().encodeToString(sharedSecretKey.getEncoded()));
 
             // Merret dhe verifikohet welcome message i nenshkruar dhe public key i serverit
             byte[] signedMessage = (byte[]) input.readObject();
@@ -71,13 +71,13 @@ public class DHClient {
             X509EncodedKeySpec rsaKeySpec = new X509EncodedKeySpec(serverSignaturePubKeyEnc);
             PublicKey serverSignaturePubKey = rsaKeyFactory.generatePublic(rsaKeySpec);
 
-            System.out.println("\033[33mServer RSA public key: " + Base64.getEncoder().encodeToString(serverSignaturePubKeyEnc) + "\033[0m");
+            Operation.yellowOp("Server RSA public key: " + Base64.getEncoder().encodeToString(serverSignaturePubKeyEnc));
 
             String welcomeMessage = "Welcome to the secure server!";
             if (verifyMessage(welcomeMessage, signedMessage, serverSignaturePubKey)) {
-                System.out.println("\033[32mSignature valid. Trusted communication established.\033[0m");
+                Operation.greenOp("Signature valid. Trusted communication established.");
             } else {
-                System.out.println("\033[31mSignature invalid. Connection may be compromised.\033[0m");
+                Operation.redOp("Signature invalid. Connection may be compromised.");
             }
 
             Scanner scanner = new Scanner(System.in);
@@ -85,7 +85,7 @@ public class DHClient {
                 try {
                     while (true) {
                         String receivedMessage = (String) input.readObject();
-                        System.out.println("\033[32mServer: " + receivedMessage + "\033[0m");
+                        Operation.server(receivedMessage);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -94,10 +94,9 @@ public class DHClient {
             readerThread.start();
 
             while (true) {
-                System.out.print("Client: ");
+                Operation.clientmsg();
                 String message = scanner.nextLine();
                 output.writeObject(message);
-                System.out.println("\033[33mClient: " + message + "\033[0m");
             }
 
         } catch (Exception e) {
